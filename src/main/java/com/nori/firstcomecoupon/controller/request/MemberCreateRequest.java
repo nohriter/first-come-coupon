@@ -6,11 +6,11 @@ import lombok.Data;
 @Data
 public class MemberCreateRequest {
 
-	private Long memberId;
+	private String name;
 
 	public Member toEntity() {
 		return Member.builder()
-			.id(this.memberId)
+			.name(name)
 			.build();
 	}
 }

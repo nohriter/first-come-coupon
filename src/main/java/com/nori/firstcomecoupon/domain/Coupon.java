@@ -9,6 +9,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -27,6 +28,8 @@ public class Coupon {
 
 	private boolean isIssued = false;
 
+	private boolean isUsed = false;
+
 	@ManyToOne
 	private Member member;
 
@@ -38,10 +41,19 @@ public class Coupon {
 		this.member = member;
 	}
 
-	public static Coupon create(String code) {
-		Coupon coupon = new Coupon();
-		coupon.code = code;
-		return coupon;
+	public void use() {
+		this.isUsed = true;
+	}
+
+	@Builder
+	private Coupon(String code) {
+		this.code = code;
+	}
+
+	public static Coupon of(String code) {
+		return Coupon.builder()
+			.code(code)
+			.build();
 	}
 
 }

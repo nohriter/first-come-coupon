@@ -1,12 +1,12 @@
 package com.nori.firstcomecoupon.service;
 
 import com.nori.firstcomecoupon.controller.request.CouponCreateRequest;
-import com.nori.firstcomecoupon.controller.request.CouponIssueRequest;
 import com.nori.firstcomecoupon.domain.Coupon;
 import com.nori.firstcomecoupon.domain.Member;
 import com.nori.firstcomecoupon.repository.CouponRepository;
 import com.nori.firstcomecoupon.repository.MemberRepository;
 import com.nori.firstcomecoupon.service.response.CouponIssueResponse;
+import com.nori.firstcomecoupon.service.response.CouponUseResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +18,7 @@ public class CouponService {
 	private final MemberRepository memberRepository;
 	private final CouponMaker couponMaker;
 
-	public CouponIssueResponse issueCoupon(CouponIssueRequest request) {
+	public CouponIssueResponse issueCoupon(Long memberId) {
 		long availableCouponsCount = couponRepository.countByIsIssuedFalse();
 		if(availableCouponsCount <= 0) {
 			throw new IllegalStateException("모든 쿠폰이 소진 됐습니다.");
@@ -27,7 +27,7 @@ public class CouponService {
 		Coupon coupon = couponRepository.findFirstByIsIssuedFalse()
 			.orElseThrow(() -> new RuntimeException("발급 가능한 쿠폰이 없습니다."));
 
-		Member member = memberRepository.findById(request.getMemberId())
+		Member member = memberRepository.findById(memberId)
 			.orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
 
 		coupon.issue();
@@ -44,5 +44,19 @@ public class CouponService {
 
 		couponMaker.createCoupons(request.getCreateCouponCount());
 		return couponRepository.countByIsIssuedFalse();
+	}
+
+	public CouponUseResponse useCoupon(Long memberId, String couponCode) {
+		Coupon coupon = couponRepository.findByMemberIdAndCode(memberId, couponCode)
+			.orElseThrow(() -> new IllegalArgumentException("보유하지 않은 쿠폰입니다."));
+
+		if(coupon.isUsed()) {
+			throw new IllegalStateException("이미 사용 된 쿠폰입니다.");
+		}
+
+		coupon.use();
+		Coupon usedCoupon = couponRepository.save(coupon);
+
+		return CouponUseResponse.of(usedCoupon);
 	}
 }

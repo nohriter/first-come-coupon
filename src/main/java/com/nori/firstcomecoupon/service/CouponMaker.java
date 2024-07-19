@@ -2,7 +2,6 @@ package com.nori.firstcomecoupon.service;
 
 import com.nori.firstcomecoupon.domain.Coupon;
 import com.nori.firstcomecoupon.repository.CouponRepository;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +20,7 @@ public class CouponMaker {
 	// 쿠폰 생성 및 저장 메서드
 	public void createCoupon() {
 		String code = generateCouponCode();
-		Coupon coupon = Coupon.create(code); // 정적 팩토리 메서드 사용
+		Coupon coupon = Coupon.of(code); // 정적 팩토리 메서드 사용
 		couponRepository.save(coupon);
 	}
 

@@ -10,4 +10,5 @@ public interface CouponRepository extends JpaRepository<Coupon, Long> {
 
 	Optional<Coupon> findFirstByIsIssuedFalse();
 	Long countByIsIssuedFalse();
+	Optional<Coupon> findByMemberIdAndCode(Long memberId, String couponCode);
 }

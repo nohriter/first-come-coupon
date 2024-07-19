@@ -2,29 +2,29 @@ package com.nori.firstcomecoupon.service.response;
 
 import com.nori.firstcomecoupon.domain.Coupon;
 import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 
-@Getter
-public class CouponIssueResponse {
+@Data
+public class CouponUseResponse {
 
 	private Long id;
 	private String code;
-	private boolean isIssued;
+	private boolean isUsed;
 	private Long memberId;
 
 	@Builder
-	public CouponIssueResponse(Long id, String code, boolean isIssued, Long memberId) {
+	private CouponUseResponse(Long id, String code, boolean isUsed, Long memberId) {
 		this.id = id;
 		this.code = code;
-		this.isIssued = isIssued;
+		this.isUsed = isUsed;
 		this.memberId = memberId;
 	}
 
-	public static CouponIssueResponse of(Coupon coupon) {
-		return CouponIssueResponse.builder()
+	public static CouponUseResponse of(Coupon coupon) {
+		return CouponUseResponse.builder()
 			.id(coupon.getId())
 			.code(coupon.getCode())
-			.isIssued(coupon.isIssued())
+			.isUsed(coupon.isUsed())
 			.memberId(coupon.getMember().getId())
 			.build();
 	}
